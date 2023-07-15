@@ -16,6 +16,8 @@ client = slack.WebClient(token=os.environ['SLACK_TOKEN'])
 BOT_ID = client.api_call("auth.test")['user_id']
 # client.chat_postMessage(channel='#test', text="Hello World!")
 
+message_counts = {}
+
 @app.route("/slack/events", methods=["GET", "POST"])
 def handle_slack_events():
     if request.method == "GET":
@@ -53,7 +55,21 @@ def message(payload):
         # Add your logic to handle the message event
         # For example, you can print the message details
         print(f"Received message: '{text}' in channel: {channel} from user: {user}")
+        if user in message_counts:
+            message_counts[user] += 1
+        else:
+            message_counts[user] = 1
         client.chat_postMessage(channel=channel, text=text)
+
+@app.route('/message-count', methods=['POST'])
+def message_count():
+    data = request.form
+    user_id = data.get('user_id')
+    channel_id = data.get('channel_id')
+    message_count = message_counts.get(user_id, 0)
+    client.chat_postMessage(channel=channel_id, text=f"Message: {message_count}")
+    
+    return Response(), 200
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
