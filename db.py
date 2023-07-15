@@ -1,13 +1,15 @@
 from mongoengine import *
 from dotenv import load_dotenv
 from pathlib import Path
+import os
+
+from models import PersonalLink
 
 # set env path
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 
-
-# connec to db
+# connect to db
 connect(host=os.environ['DB_URI'])
 
 class PersonalLinks(Document):
@@ -28,8 +30,8 @@ def InsertPersonalLinks(user, channel, source, link):
 
 def FetchPersonalLinks(user, channel):
     personalLinksArray = []
-    for personalLink in PersonalLinks.objects(user=user, channel=channel)
-        data = PersonalLinks(
+    for personalLink in PersonalLinks.objects(user=user, channel=channel):
+        data = PersonalLink(
             personalLink.user, 
             personalLink.channel, 
             personalLink.source, 
