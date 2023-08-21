@@ -94,7 +94,8 @@ def social():
             user= user_id,
             channel=channel_id
         )
-        client.chat_postMessage(channel=channel_id, text=f"List: {list}")
+        for v in list:
+            client.chat_postMessage(channel=channel_id, text=f"{v.source}: {v.link}")
     
     return Response(), 200
 
