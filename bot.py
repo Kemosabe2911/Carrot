@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from flask import Flask, request, Response
 from slackeventsapi import SlackEventAdapter
 
+from db import InsertPersonalLinks, FetchPersonalLinks
+
 # set env path
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
@@ -68,6 +70,31 @@ def message_count():
     channel_id = data.get('channel_id')
     message_count = message_counts.get(user_id, 0)
     client.chat_postMessage(channel=channel_id, text=f"Message: {message_count}")
+    
+    return Response(), 200
+
+@app.route('/social', methods=['POST'])
+def social():
+    data = request.form
+    user_id = data.get('user_id')
+    channel_id = data.get('channel_id')
+    text = data.get('text')
+    
+    socialDataList = text.split()
+    if len(socialDataList) > 1 :
+        InsertPersonalLinks(
+            user= user_id,
+            channel= channel_id,
+            source= socialDataList[0],
+            link= socialDataList[1]
+        )
+        client.chat_postMessage(channel=channel_id, text=f"Message: insert success")
+    else:
+        list = FetchPersonalLinks(
+            user= user_id,
+            channel=channel_id
+        )
+        client.chat_postMessage(channel=channel_id, text=f"List: {list}")
     
     return Response(), 200
 
