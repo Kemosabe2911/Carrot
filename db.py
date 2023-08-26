@@ -40,3 +40,10 @@ def FetchPersonalLinks(user, channel):
         personalLinksArray.append(data)
 
     return personalLinksArray if len(personalLinksArray) > 0 else None
+
+
+def UpdatePersonalLinks(user, channel, source ,link):
+    PersonalLinks.objects(user=user, channel=channel, source=source).update(link=link)
+
+def DeletePersonalLinks(user, channel, source):
+    PersonalLinks.objects(user=user, channel=channel, source=source).delete()

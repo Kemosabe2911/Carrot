@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 from flask import Flask, request, Response
 from slackeventsapi import SlackEventAdapter
 
-from db import InsertPersonalLinks, FetchPersonalLinks
+from db import FetchPersonalLinks
+from internal.social import PerformSocialLinkOperation
 
 # set env path
 env_path = Path('.') / '.env'
@@ -82,20 +83,22 @@ def social():
     
     socialDataList = text.split()
     if len(socialDataList) > 1 :
-        InsertPersonalLinks(
-            user= user_id,
-            channel= channel_id,
-            source= socialDataList[0],
-            link= socialDataList[1]
+        PerformSocialLinkOperation(
+            user=user_id,
+            channel=channel_id,
+            data=socialDataList
         )
-        client.chat_postMessage(channel=channel_id, text=f"Message: insert success")
+        client.chat_postMessage(channel=channel_id, text=f"Message: operation success")
     else:
         list = FetchPersonalLinks(
             user= user_id,
             channel=channel_id
         )
-        for v in list:
-            client.chat_postMessage(channel=channel_id, text=f"{v.source}: {v.link}")
+        if list == None:
+            client.chat_postMessage(channel=channel_id, text=f"No data to display")
+        else:
+            for v in list:
+                client.chat_postMessage(channel=channel_id, text=f"{v.source}: {v.link}")
     
     return Response(), 200
 
