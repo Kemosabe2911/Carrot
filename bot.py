@@ -5,8 +5,9 @@ from dotenv import load_dotenv
 from flask import Flask, request, Response
 from slackeventsapi import SlackEventAdapter
 
-from db import FetchPersonalLinks
+from db import FetchPersonalLinks, FetchPersonalDocuments
 from internal.social import PerformSocialLinkOperation
+from internal.document import PerformDocumentsOperation
 
 # set env path
 env_path = Path('.') / '.env'
@@ -91,6 +92,34 @@ def social():
         client.chat_postMessage(channel=channel_id, text=f"Message: operation success")
     else:
         list = FetchPersonalLinks(
+            user= user_id,
+            channel=channel_id
+        )
+        if list == None:
+            client.chat_postMessage(channel=channel_id, text=f"No data to display")
+        else:
+            for v in list:
+                client.chat_postMessage(channel=channel_id, text=f"{v.source}: {v.link}")
+    
+    return Response(), 200
+
+@app.route('/doc', methods=['POST'])
+def Documents():
+    data = request.form
+    user_id = data.get('user_id')
+    channel_id = data.get('channel_id')
+    text = data.get('text')
+    
+    docDataList = text.split()
+    if len(docDataList) > 1 :
+        PerformDocumentsOperation(
+            user=user_id,
+            channel=channel_id,
+            data=docDataList
+        )
+        client.chat_postMessage(channel=channel_id, text=f"Message: operation success")
+    else:
+        list = FetchPersonalDocuments(
             user= user_id,
             channel=channel_id
         )

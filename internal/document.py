@@ -1,24 +1,24 @@
-from db import InsertPersonalLinks, UpdatePersonalLinks, DeletePersonalLinks
+from db import InsertPersonalDocuments, UpdatePersonalDocuments, DeletePersonalDocuments
 from utils.consts import SlackInsertCommand, SlackUpdateCommand, SlackDeleteCommand
 
-def PerformSocialLinkOperation(user, channel, data):
+def PerformDocumentsOperation(user, channel, data):
     operation = data[0]
     if operation == SlackInsertCommand:
-        InsertPersonalLinks(
+        InsertPersonalDocuments(
             user= user,
             channel= channel,
             source= data[1],
             link= data[2]
         )
     elif operation == SlackUpdateCommand:
-        UpdatePersonalLinks(
+        UpdatePersonalDocuments(
             user= user,
             channel= channel,
             source= data[1],
             link= data[2]
         )
     elif operation == SlackDeleteCommand:
-         DeletePersonalLinks(
+         DeletePersonalDocuments(
             user= user,
             channel= channel,
             source= data[1],

@@ -1,4 +1,4 @@
-# social
-SocialLinkInsertCommand = "insert"
-SocialLinkUpdateCommand = "update"
-SocialLinkDeleteCommand = "delete"
+# slack commands
+SlackInsertCommand = "insert"
+SlackUpdateCommand = "update"
+SlackDeleteCommand = "delete"
