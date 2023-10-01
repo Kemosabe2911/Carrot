@@ -5,10 +5,10 @@
 - python-dotenv
 - flask
 - slackeventsapi
-
+- openai
 
 ## Progress
  - Social Links - Complete
  - Documents - Complete
- - ChatGPT Integration - In Progress
+ - ChatGPT Integration - Complete
  - Reminder - Todo

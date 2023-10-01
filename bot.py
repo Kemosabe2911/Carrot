@@ -10,6 +10,9 @@ from config import GetSlackToken, GetSlackSigningSecret
 from db import FetchPersonalLinks, FetchPersonalDocuments
 from internal.social import PerformSocialLinkOperation
 from internal.document import PerformDocumentsOperation
+from utils.common import FetchChannelName
+from utils.consts import ChatGPTChannelName
+from utils.chatgpt import CallChatGPTAI
 
 # set env path
 env_path = Path('.') / '.env'
@@ -57,10 +60,17 @@ def message(payload):
     user = event.get('user')
     text = event.get('text')
 
+    channel_name = FetchChannelName(client=client, channel_id=channel)
+
+    if channel_name == ChatGPTChannelName:
+        message = CallChatGPTAI(input_text=text)
+        print(f"Received message: '{message}'")
+        client.chat_postMessage(channel=channel, text=message)
+
     if BOT_ID != user:
         # Add your logic to handle the message event
         # For example, you can print the message details
-        print(f"Received message: '{text}' in channel: {channel} from user: {user}")
+        print(f"Received message: '{text}' in channel: {channel_name} from user: {user}")
         if user in message_counts:
             message_counts[user] += 1
         else:

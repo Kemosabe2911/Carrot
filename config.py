@@ -9,3 +9,6 @@ def GetSlackSigningSecret():
 
 def GetDatabaseURI():
     return os.environ['DB_URI']
+
+def GetOpenAIKey():
+    return os.environ['OPENAI_API_KEY']
