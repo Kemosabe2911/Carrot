@@ -1,9 +1,11 @@
 import slack
-import os
 from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask, request, Response
 from slackeventsapi import SlackEventAdapter
+import threading
+import schedule
+import time
 
 from config import GetSlackToken, GetSlackSigningSecret
 
@@ -142,6 +144,23 @@ def Documents():
                 client.chat_postMessage(channel=channel_id, text=f"{v.source}: {v.link}")
     
     return Response(), 200
+
+def job():
+    print("Job is running...")
+
+def scheduled_job():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+# Schedule a job to run every 5 minutes
+schedule.every(5).minutes.do(job)
+
+# Create a thread for the scheduled job
+scheduled_job_thread = threading.Thread(target=scheduled_job)
+
+# Start the scheduled job thread in the background
+scheduled_job_thread.start()
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

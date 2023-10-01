@@ -11,4 +11,4 @@
  - Social Links - Complete
  - Documents - Complete
  - ChatGPT Integration - Complete
- - Reminder - Todo
+ - Reminder - In Progress
