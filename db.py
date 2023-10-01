@@ -3,14 +3,16 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 
-from models import PersonalLink, PersonalDocument
+from config import GetDatabaseURI
+
+from models import PersonalLink, PersonalDocument, PicturesLink
 
 # set env path
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 
 # connect to db
-connect(host=os.environ['DB_URI'])
+connect(host=GetDatabaseURI())
 
 class PersonalLinks(Document):
     user = StringField(required=True)
@@ -22,6 +24,12 @@ class PersonalDocuments(Document):
     user = StringField(required=True)
     channel = StringField(required=True)
     source = StringField(required=True)
+    link = StringField(required=True)
+
+class PictureLink(DynamicDocument):
+    user = StringField(required=True)
+    channel = StringField(required=True)
+    title = StringField(required=True)
     link = StringField(required=True)
 
 ### Personal Links
@@ -66,12 +74,12 @@ def InsertPersonalDocuments(user, channel, source, link):
 
 def FetchPersonalDocuments(user, channel):
     personalDocumentsArray = []
-    for personalLink in PersonalDocuments.objects(user=user, channel=channel):
+    for personalDoc in PersonalDocuments.objects(user=user, channel=channel):
         data = PersonalDocument(
-            personalLink.user, 
-            personalLink.channel, 
-            personalLink.source, 
-            personalLink.link
+            personalDoc.user, 
+            personalDoc.channel, 
+            personalDoc.source, 
+            personalDoc.link
         )
         personalDocumentsArray.append(data)
 
@@ -83,3 +91,49 @@ def UpdatePersonalDocuments(user, channel, source ,link):
 
 def DeletePersonalDocuments(user, channel, source):
     PersonalDocuments.objects(user=user, channel=channel, source=source).delete()
+
+### My Pictures
+def InsertPicturesLink(user, channel, title, link, tags):
+    personalLink = PictureLink(
+        user=user,
+        channel=channel,
+        title=title,
+        link=link
+    )
+    personalLink.tags = tags
+    personalLink.save()
+
+def FetchPicturesLink(user, channel):
+    myPicturesArray = []
+    for picturesLink in PictureLink.objects(user=user, channel=channel):
+        data = PicturesLink(
+            picturesLink.user, 
+            picturesLink.channel, 
+            picturesLink.title, 
+            picturesLink.link,
+            picturesLink.tags
+        )
+        myPicturesArray.append(data)
+
+    return myPicturesArray if len(myPicturesArray) > 0 else None
+
+def FetchPicturesLinkByTags(user, channel, tags):
+    myPicturesArray = []
+    for picturesLink in PictureLink.objects(user=user, channel=channel, tags=tags):
+        data = PicturesLink(
+            picturesLink.user, 
+            picturesLink.channel, 
+            picturesLink.title, 
+            picturesLink.link,
+            picturesLink.tags
+        )
+        myPicturesArray.append(data)
+
+    return myPicturesArray if len(myPicturesArray) > 0 else None
+
+
+def UpdatePicturesLink(user, channel, title ,link):
+    PictureLink.objects(user=user, channel=channel, title=title).update(link=link)
+
+def DeletePicturesLink(user, channel, title):
+    PictureLink.objects(user=user, channel=channel, title=title).delete()
