@@ -33,26 +33,7 @@ message_counts = {}
 def handle_slack_events():
     if request.method == "GET":
         challenge = request.args.get("challenge")
-        return challenge, 200
-
-    # Handle other events using the POST method
-    # data = request.get_json()
-    # print(data)
-    # if "event" in data:
-    #     event = data["event"]
-    #     event_type = event.get("type")
-
-    #     if event_type == "message":
-    #         channel = event.get("channel")
-    #         text = event.get("text")
-    #         user = event.get("user")
-
-    #         if BOT_ID != user:
-    #             # Add your logic to handle the message event
-    #             # For example, you can print the message details
-    #             print(f"Received message: '{text}' in channel: {channel} from user: {user}")
-    #             client.chat_postMessage(channel=channel, text=text)
-    
+        return challenge, 200 
     return "", 200
 
 @slack_event_adapter.on('message')
