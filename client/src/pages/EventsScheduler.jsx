@@ -3,29 +3,32 @@ import { useNavigate } from 'react-router-dom'
 
 import { preview } from '../assets'
 import { getRandomPrompt } from '../utils'
-import { FormField, Loader } from '../components'
+import { FormField, Loader, DateTimePicker } from '../components'
 
 const EventsScheduler = () => {
   const navigate = useNavigate()
   const [form, setForm] = useState({
     name: '',
     desc: '',
-    time: '',
+    date: '',
   })
 
   const [loading, setLoading] = useState(false)
+  // const [selectedDate, setSelectedDate] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if(form.desc && form.time) {
+    if(form.name) {
       setLoading(true)
+      console.log(form)
 
       try {
-        const response = await fetch('http://localhost:8080/api/v1/posts', {
+        const response = await fetch('http://localhost:5000/schedule/event', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
           },
           body: JSON.stringify(form),
         })
@@ -33,6 +36,7 @@ const EventsScheduler = () => {
         await response.json()
         navigate('/')
       } catch (err) {
+        console.log(form, err)
         alert(err)
       } finally {
         setLoading(false)
@@ -43,7 +47,12 @@ const EventsScheduler = () => {
   }
 
   const handleChange = (e) => {
-    setForm({...form, [e.target.name]: e.target.value })
+    console.log(e)
+    if (e.target == undefined) {
+      setForm({...form, ['date']: e})
+    } else {
+      setForm({...form, [e.target.name]: e.target.value })
+    }
   }
 
   return (
@@ -71,14 +80,20 @@ const EventsScheduler = () => {
           <FormField
             labelName="Your Description"
             type="text"
-            name="prompt"
-            placeholder="an oil pastel drawing of an annoyed cat in a spaceship"
+            name="desc"
+            placeholder="description"
             value={form.desc}
             handleChange={handleChange}
           />
+          <div>
+            <DateTimePicker 
+              labelName={"Schedule Date Time"} 
+              handleChange={handleChange}
+            />
+          </div>
         </div>
 
-        <div className='mt-10'>
+        <div className='mt-6'>
           <p className='mt-2 text-[#666e75] text-[14px]'>
             Once scheduled, the Carrot slack bot will notify of these events and dates
           </p>

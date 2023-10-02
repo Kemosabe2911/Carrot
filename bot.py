@@ -1,7 +1,8 @@
 import slack
 from pathlib import Path
 from dotenv import load_dotenv
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
+from flask_cors import CORS
 from slackeventsapi import SlackEventAdapter
 import threading
 import schedule
@@ -12,6 +13,7 @@ from config import GetSlackToken, GetSlackSigningSecret
 from db import FetchPersonalLinks, FetchPersonalDocuments
 from internal.social import PerformSocialLinkOperation
 from internal.document import PerformDocumentsOperation
+from internal.event_schedule import CreateEventSchedule
 from utils.common import FetchChannelName
 from utils.consts import ChatGPTChannelName
 from utils.chatgpt import CallChatGPTAI
@@ -21,6 +23,7 @@ env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 
 app = Flask(__name__)
+CORS(app)
 slack_event_adapter = SlackEventAdapter(GetSlackSigningSecret(), '/slack/events', app)
 
 client = slack.WebClient(token=GetSlackToken())
@@ -125,6 +128,30 @@ def Documents():
                 client.chat_postMessage(channel=channel_id, text=f"{v.source}: {v.link}")
     
     return Response(), 200
+
+@app.route('/schedule/event', methods=['POST'])
+def InsertEventScheduleData():
+    try:
+        json_data = request.get_json()
+
+        event_name = json_data.get('name')
+        desc = json_data.get('desc')
+        date_time = json_data.get('date')
+        print(event_name, desc, date_time)
+
+        CreateEventSchedule(
+            name= event_name,
+            desc= desc,
+            completed_at= date_time,
+        )
+
+        result = f"Received and processed data: {json_data}"
+
+        return jsonify({"result": result})
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
 
 def job():
     print("Job is running...")

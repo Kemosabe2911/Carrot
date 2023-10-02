@@ -1,7 +1,7 @@
 from mongoengine import *
 from dotenv import load_dotenv
 from pathlib import Path
-import os
+from datetime import datetime
 
 from config import GetDatabaseURI
 
@@ -31,6 +31,15 @@ class PictureLink(DynamicDocument):
     channel = StringField(required=True)
     title = StringField(required=True)
     link = StringField(required=True)
+
+class EventSchedule(Document):
+    name = StringField(required=True)
+    desc = StringField()
+    completed_at = DateTimeField(required=True)
+    reminded_at = DateTimeField(required=True)
+    created_at = DateTimeField(required=True)
+    is_completed = BooleanField()
+    is_reminded = BooleanField()
 
 ### Personal Links
 def InsertPersonalLinks(user, channel, source, link):
@@ -137,3 +146,17 @@ def UpdatePicturesLink(user, channel, title ,link):
 
 def DeletePicturesLink(user, channel, title):
     PictureLink.objects(user=user, channel=channel, title=title).delete()
+
+
+### Event Schedule
+def InsertEventSchedule(name, desc, completed_at, reminded_at):
+    eventSchedule = EventSchedule(
+        name = name,
+        desc = desc,
+        completed_at = completed_at,
+        reminded_at = reminded_at,
+        created_at = datetime.now(),
+        is_completed = False,
+        is_reminded = False,
+    )
+    eventSchedule.save()
