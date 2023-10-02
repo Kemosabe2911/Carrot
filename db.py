@@ -5,7 +5,7 @@ from datetime import datetime
 
 from config import GetDatabaseURI
 
-from models import PersonalLink, PersonalDocument, PicturesLink
+from models import PersonalLink, PersonalDocument, PicturesLink, EventScheduler
 
 # set env path
 env_path = Path('.') / '.env'
@@ -160,3 +160,19 @@ def InsertEventSchedule(name, desc, completed_at, reminded_at):
         is_reminded = False,
     )
     eventSchedule.save()
+
+def FetchScheduleEvents():
+    scheduleEventArray = []
+    for scheduleEvent in EventSchedule.objects():
+        data = EventScheduler(
+            scheduleEvent.name,
+            scheduleEvent.desc,
+            scheduleEvent.completed_at,
+            scheduleEvent.reminded_at,
+            scheduleEvent.created_at,
+            scheduleEvent.is_completed,
+            scheduleEvent.is_reminded,
+        )
+        scheduleEventArray.append(data)
+
+    return scheduleEventArray if len(scheduleEventArray) > 0 else None

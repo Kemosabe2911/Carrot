@@ -20,12 +20,12 @@ class PicturesLink:
         self.link = link
         self.tags = tags
 
-class EventSchedule:
-    def __init__(self, name, desc, complete_at, remind_at, created_at, is_completed, is_reminded) :
+class EventScheduler:
+    def __init__(self, name, desc, completed_at, reminded_at, created_at, is_completed, is_reminded) :
         self.name = name
         self.desc = desc
-        self.complete_at = complete_at
-        self.remind_at = remind_at
+        self.completed_at = completed_at
+        self.reminded_at = reminded_at
         self.created_at = created_at
         self.is_completed = is_completed
         self.is_reminded = is_reminded

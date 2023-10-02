@@ -7,16 +7,18 @@ from slackeventsapi import SlackEventAdapter
 import threading
 import schedule
 import time
+import json
 
 from config import GetSlackToken, GetSlackSigningSecret
 
-from db import FetchPersonalLinks, FetchPersonalDocuments
+from db import FetchPersonalLinks, FetchPersonalDocuments, FetchScheduleEvents
 from internal.social import PerformSocialLinkOperation
 from internal.document import PerformDocumentsOperation
 from internal.event_schedule import CreateEventSchedule
 from utils.common import FetchChannelName
 from utils.consts import ChatGPTChannelName
 from utils.chatgpt import CallChatGPTAI
+from utils.response import EventSchedulerResponse, SerializeEventScheduler
 
 # set env path
 env_path = Path('.') / '.env'
@@ -152,6 +154,17 @@ def InsertEventScheduleData():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     
+@app.route('/schedule/event', methods=['GET'])
+def FetchEventScheduleData():
+    data = FetchScheduleEvents()
+    event_schedules = []
+    for v in data:
+        print(v.name, v.desc, v.completed_at)
+        event_schedules.append(EventSchedulerResponse(name=v.name, desc=v.desc, completed_at=v.completed_at, is_completed=v.is_completed))
+    
+    json_data = json.dumps(event_schedules, default=SerializeEventScheduler)
+    parsed_data = json.loads(json_data)
+    return jsonify(data=parsed_data)
 
 def job():
     print("Job is running...")
