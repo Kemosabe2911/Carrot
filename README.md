@@ -1,6 +1,6 @@
 # Carrot
 
-[carrot](https://github.com/Kemosabe2911/Carrot/blob/master/client/src/assets/carrot-logo.png "Carrot")
+![carrot](https://github.com/Kemosabe2911/Carrot/blob/master/client/src/assets/carrot-logo.png "Carrot")
 
 ## Python Packages Used
 - slackclient
