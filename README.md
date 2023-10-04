@@ -41,9 +41,3 @@ Carrot is a slack bot developed with the intent to assist you in your day to day
 - flask
 - slackeventsapi
 - openai
-
-## Progress
- - Social Links - Complete
- - Documents - Complete
- - ChatGPT Integration - Complete
- - Reminder - In Progress
