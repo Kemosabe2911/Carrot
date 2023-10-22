@@ -35,9 +35,12 @@ class PictureLink(DynamicDocument):
 class EventSchedule(Document):
     name = StringField(required=True)
     desc = StringField()
+    type = StringField(required=True)
     completed_at = DateTimeField(required=True)
     reminded_at = DateTimeField(required=True)
     created_at = DateTimeField(required=True)
+    updated_at = DateTimeField(required=True)
+    deleted_at = DateTimeField()
     is_completed = BooleanField()
     is_reminded = BooleanField()
 
@@ -149,27 +152,32 @@ def DeletePicturesLink(user, channel, title):
 
 
 ### Event Schedule
-def InsertEventSchedule(name, desc, completed_at, reminded_at):
+def InsertEventSchedule(name, desc, type, completed_at, reminded_at):
     eventSchedule = EventSchedule(
         name = name,
         desc = desc,
+        type = type,
         completed_at = completed_at,
         reminded_at = reminded_at,
         created_at = datetime.now(),
+        updated_at = datetime.now(),
         is_completed = False,
         is_reminded = False,
     )
     eventSchedule.save()
 
-def FetchScheduleEvents():
+def FetchScheduleEvents(type):
     scheduleEventArray = []
-    for scheduleEvent in EventSchedule.objects():
+    for scheduleEvent in EventSchedule.objects(type = type):
         data = EventScheduler(
             scheduleEvent.name,
             scheduleEvent.desc,
+            scheduleEvent.type,
             scheduleEvent.completed_at,
             scheduleEvent.reminded_at,
             scheduleEvent.created_at,
+            scheduleEvent.updated_at,
+            scheduleEvent.deleted_at,
             scheduleEvent.is_completed,
             scheduleEvent.is_reminded,
         )

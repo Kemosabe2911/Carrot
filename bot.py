@@ -131,18 +131,19 @@ def Documents():
     
     return Response(), 200
 
-@app.route('/schedule/event', methods=['POST'])
-def InsertEventScheduleData():
+@app.route('/schedule/<type>/', methods=['POST'])
+def InsertEventScheduleData(type):
     try:
         json_data = request.get_json()
 
         event_name = json_data.get('name')
         desc = json_data.get('desc')
         date_time = json_data.get('date')
-        print(event_name, desc, date_time)
+        print(event_name, desc, date_time, type)
 
         CreateEventSchedule(
             name= event_name,
+            type= type,
             desc= desc,
             completed_at= date_time,
         )
@@ -154,13 +155,13 @@ def InsertEventScheduleData():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     
-@app.route('/schedule/event', methods=['GET'])
-def FetchEventScheduleData():
-    data = FetchScheduleEvents()
+@app.route('/schedule/<type>/', methods=['GET'])
+def FetchEventScheduleData(type):
+    data = FetchScheduleEvents(type)
     event_schedules = []
     for v in data:
         print(v.name, v.desc, v.completed_at)
-        event_schedules.append(EventSchedulerResponse(name=v.name, desc=v.desc, completed_at=v.completed_at, is_completed=v.is_completed))
+        event_schedules.append(EventSchedulerResponse(name=v.name, desc=v.desc, type= v.type, completed_at=v.completed_at, is_completed=v.is_completed))
     
     json_data = json.dumps(event_schedules, default=SerializeEventScheduler)
     parsed_data = json.loads(json_data)

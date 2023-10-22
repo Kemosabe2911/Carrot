@@ -1,10 +1,10 @@
 from db import InsertEventSchedule
 from datetime import datetime, timedelta
 import re
+import dateutil.parser
 
-def CreateEventSchedule(name, desc, completed_at):
+def CreateEventSchedule(name, type, desc, completed_at):
     reminded_at = convert_iso_to_datetime(completed_at) - timedelta(minutes=5)
-    print(reminded_at)
     if len(name) < 1:
         print("error: specify event name")
         return False
@@ -12,6 +12,7 @@ def CreateEventSchedule(name, desc, completed_at):
     InsertEventSchedule(
         name= name,
         desc= desc,
+        type = type,
         completed_at= convert_iso_to_datetime(completed_at),
         reminded_at= reminded_at,
     )
@@ -38,7 +39,10 @@ def convert_to_datetime(date_string):
 
 def convert_iso_to_datetime(date_string):
     # Convert to datetime object
-    dt_object = datetime.fromisoformat(date_string.replace("Z", "+00:00"))
+    # dt_object = datetime.fromisoformat(date_string.replace("Z", "+00:00"))
 
-    print(dt_object)
-    return dt_object
+    # print(dt_object)
+    # return dt_object
+    date_string = date_string.replace('(India Standard Time)', '').strip()
+    date_time = dateutil.parser.parse(date_string)
+    return date_time
