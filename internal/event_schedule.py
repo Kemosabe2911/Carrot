@@ -1,4 +1,4 @@
-from db import InsertEventSchedule
+from db import InsertEventSchedule, FetchScheduleEventsByDate, CompleteScheduleEvent
 from datetime import datetime, timedelta
 import re
 import dateutil.parser
@@ -50,3 +50,9 @@ def convert_iso_to_datetime(date_string):
     date_string = date_string.replace('(India Standard Time)', '').strip()
     date_time = dateutil.parser.parse(date_string)
     return date_time
+
+def CompletePastScheduleEvents(type):
+    date = datetime.now().strftime("%m/%d/%Y")
+    scheduleEventsForCurrentDate = FetchScheduleEventsByDate(type=type, date=date)
+    for event in scheduleEventsForCurrentDate:
+        CompleteScheduleEvent(name=event.name, type=type)

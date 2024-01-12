@@ -187,3 +187,26 @@ def FetchScheduleEvents(type):
         scheduleEventArray.append(data)
 
     return scheduleEventArray if len(scheduleEventArray) > 0 else None
+
+def FetchScheduleEventsByDate(type, date):
+    scheduleEventArray = []
+    for scheduleEvent in EventSchedule.objects(type = type, date= date):
+        data = EventScheduler(
+            scheduleEvent.name,
+            scheduleEvent.desc,
+            scheduleEvent.type,
+            scheduleEvent.completed_at,
+            scheduleEvent.reminded_at,
+            scheduleEvent.created_at,
+            scheduleEvent.updated_at,
+            scheduleEvent.deleted_at,
+            scheduleEvent.is_completed,
+            scheduleEvent.is_reminded,
+            scheduleEvent.date,
+        )
+        scheduleEventArray.append(data)
+
+    return scheduleEventArray if len(scheduleEventArray) > 0 else None
+
+def CompleteScheduleEvent(name, type):
+    EventScheduler.objects(name=name, type=type).update(is_completed=True, completed_at=datetime.now())
