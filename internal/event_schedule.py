@@ -4,17 +4,21 @@ import re
 import dateutil.parser
 
 def CreateEventSchedule(name, type, desc, completed_at):
-    reminded_at = convert_iso_to_datetime(completed_at) - timedelta(minutes=5)
+    completedDateTime = convert_iso_to_datetime(completed_at)
+    remindedDateTime = completedDateTime - timedelta(minutes=5)
     if len(name) < 1:
         print("error: specify event name")
         return False
+    
+    date = completedDateTime.strftime("%m/%d/%Y")
 
     InsertEventSchedule(
         name= name,
         desc= desc,
         type = type,
-        completed_at= convert_iso_to_datetime(completed_at),
-        reminded_at= reminded_at,
+        completed_at= completedDateTime,
+        reminded_at= remindedDateTime,
+        date= date,
     )
 
 

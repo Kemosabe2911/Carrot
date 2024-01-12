@@ -43,6 +43,7 @@ class EventSchedule(Document):
     deleted_at = DateTimeField()
     is_completed = BooleanField()
     is_reminded = BooleanField()
+    date = StringField()
 
 ### Personal Links
 def InsertPersonalLinks(user, channel, source, link):
@@ -152,7 +153,7 @@ def DeletePicturesLink(user, channel, title):
 
 
 ### Event Schedule
-def InsertEventSchedule(name, desc, type, completed_at, reminded_at):
+def InsertEventSchedule(name, desc, type, completed_at, reminded_at, date):
     eventSchedule = EventSchedule(
         name = name,
         desc = desc,
@@ -163,6 +164,7 @@ def InsertEventSchedule(name, desc, type, completed_at, reminded_at):
         updated_at = datetime.now(),
         is_completed = False,
         is_reminded = False,
+        date = date,
     )
     eventSchedule.save()
 
@@ -180,6 +182,7 @@ def FetchScheduleEvents(type):
             scheduleEvent.deleted_at,
             scheduleEvent.is_completed,
             scheduleEvent.is_reminded,
+            scheduleEvent.date,
         )
         scheduleEventArray.append(data)
 
